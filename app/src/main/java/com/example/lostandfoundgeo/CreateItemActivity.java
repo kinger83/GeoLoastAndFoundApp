@@ -1,6 +1,7 @@
 package com.example.lostandfoundgeo;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -21,6 +22,11 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -32,6 +38,8 @@ import android.location.Location;
 import android.content.pm.PackageManager;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -61,6 +69,21 @@ public class CreateItemActivity extends AppCompatActivity {
 
         // setup db
         db = FirebaseFirestore.getInstance();
+
+        // intialize places
+        Places.initialize(getApplicationContext(), "AIzaSyAk7cEla4x4ZI5O4e2rh9jeymxINtZuEFA");
+        binding.locationEditText.setFocusable(false);
+        binding.locationEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<Place.Field> fieldlist = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.NAME);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldlist).build(getApplicationContext());
+                startActivityForResult(intent, 100);
+            }
+        });
+
+
+
 
         //setup location client
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -140,6 +163,20 @@ public class CreateItemActivity extends AppCompatActivity {
             }
         });
     }// end onCreate
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if( requestCode == 100 & resultCode == RESULT_OK){
+            Place place = Autocomplete.getPlaceFromIntent(data);
+            binding.locationEditText.setText(place.getAddress());
+            latitude = String.valueOf(place.getLatLng().latitude);
+            longitude = String.valueOf(place.getLatLng().longitude);
+        }
+        else if(resultCode == AutocompleteActivity.RESULT_ERROR){
+            Toast.makeText(this, "Error getting location", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     // set user inputs to strings
     private void setInputs(){

@@ -66,7 +66,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         pos = new LatLng(lat,longg);
 
         // move camera to position
-        this.gMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
+        float zoomLevel = 8.5f;
+        this.gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, zoomLevel));
 
 
     }
