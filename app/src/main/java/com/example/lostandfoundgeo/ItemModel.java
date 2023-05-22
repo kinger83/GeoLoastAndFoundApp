@@ -3,9 +3,9 @@ import java.io.Serializable;
 
 public class ItemModel implements Serializable {
     private String name, phone, description, date, location, isLost, latitude, longitude;
-    private int id;
+    private String id;
 
-    public ItemModel(int id, String name, String phone, String description, String date, String location, String isLost, String latitude, String longitude) {
+    public ItemModel(String id, String name, String phone, String description, String date, String location, String isLost, String latitude, String longitude) {
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -45,11 +45,11 @@ public class ItemModel implements Serializable {
     public ItemModel() {
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

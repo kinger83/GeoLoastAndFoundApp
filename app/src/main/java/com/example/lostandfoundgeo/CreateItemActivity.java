@@ -93,19 +93,23 @@ public class CreateItemActivity extends AppCompatActivity {
                             REQUEST_LOCATION_PERMISSION);
                     return;
                 }
-
+                // get location
                 fusedLocationProviderClient.getLastLocation()
                         .addOnSuccessListener(new OnSuccessListener<Location>() {
+                            // if location found
                             @Override
                             public void onSuccess(Location location) {
                                 if(location != null){
+                                    // setup geocoder and create address list
                                     Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
                                     List<Address> addresses = null;
                                     try {
+                                        //add geocoded address to address list
                                         addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),1);
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
+                                    // set lat/long/userview from address
                                     latitude = String.valueOf(addresses.get(0).getLatitude());
                                     longitude = String.valueOf(addresses.get(0).getLongitude());
                                     binding.locationEditText.setText(addresses.get(0).getAddressLine(0));
