@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -32,6 +33,15 @@ public class ShowAllActivity extends AppCompatActivity {
         binding.listProgressBar.setVisibility(View.GONE);
         // setup database
         db = FirebaseFirestore.getInstance();
+
+        // set add new item button
+        binding.addItemButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), CreateItemActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // add all items from db to list
         populateItems();

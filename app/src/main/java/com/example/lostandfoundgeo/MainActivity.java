@@ -55,9 +55,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // get items to show on map
                 populateItems();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("items", items);
-                startActivity(intent);
+
             }
         });
     }
@@ -86,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
                             items.add(item);
                         }
                         binding.mainProgressBar.setVisibility(View.GONE);
+                        Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+                        intent.putExtra("items", items);
+                        startActivity(intent);
                     }else {
                             // Handle the error
                             Toast.makeText(getApplicationContext(), "Error retrieving items", Toast.LENGTH_SHORT).show();
