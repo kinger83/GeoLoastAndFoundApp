@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "935248676953",
+    "project_id": "geolostfound",
+    "storage_bucket": "geolostfound.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935248676953:android:cfb3e5df00966523470948",
+        "android_client_info": {
+          "package_name": "com.example.lostandfoundgeo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "935248676953-0eajqe8v27vn2c7qsj35v4cok251pm6i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWvqKAS25GuikDPM0wBQKVQmvioe1kWvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "935248676953-0eajqe8v27vn2c7qsj35v4cok251pm6i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
