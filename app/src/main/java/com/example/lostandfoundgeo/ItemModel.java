@@ -2,10 +2,10 @@ package com.example.lostandfoundgeo;
 import java.io.Serializable;
 
 public class ItemModel implements Serializable {
-    private String name, phone, description, date, location, isLost;
+    private String name, phone, description, date, location, isLost, latitude, longitude;
     private int id;
 
-    public ItemModel(int id, String name, String phone, String description, String date, String location, String isLost) {
+    public ItemModel(int id, String name, String phone, String description, String date, String location, String isLost, String latitude, String longitude) {
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -13,6 +13,8 @@ public class ItemModel implements Serializable {
         this.date = date;
         this.location = location;
         this.isLost = isLost;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public ItemModel(String name, String phone, String description, String date, String location, String isLost) {
@@ -22,6 +24,22 @@ public class ItemModel implements Serializable {
         this.date = date;
         this.location = location;
         this.isLost = isLost;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
     public ItemModel() {

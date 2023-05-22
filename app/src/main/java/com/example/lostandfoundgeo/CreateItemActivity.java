@@ -2,27 +2,53 @@ package com.example.lostandfoundgeo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.lostandfoundgeo.databinding.ActivityCreateItemBinding;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+
+import android.location.Location;
+import android.content.pm.PackageManager;
+
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import android.Manifest;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
 
 public class CreateItemActivity extends AppCompatActivity {
     FirebaseFirestore db;
     ActivityCreateItemBinding binding;
-    String name, phone, description, date, location, radio;
+    String name, phone, description, date, location, radio, latitude, longitude;
+
+    public static final int REQUEST_LOCATION_PERMISSION = 1;
+    FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +62,17 @@ public class CreateItemActivity extends AppCompatActivity {
         // setup db
         db = FirebaseFirestore.getInstance();
 
+        //setup location client
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
         // set lost or found radio click
         binding.lostFoundRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.lostRadioButton){
+                if (checkedId == R.id.lostRadioButton) {
                     radio = "lost";
                 }
-                if(checkedId == R.id.foundRadioButton){
+                if (checkedId == R.id.foundRadioButton) {
                     radio = "found";
                 }
             }
@@ -53,11 +82,44 @@ public class CreateItemActivity extends AppCompatActivity {
         binding.getLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Check for location permissions
+                if (ActivityCompat.checkSelfPermission(CreateItemActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(CreateItemActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                                != PackageManager.PERMISSION_GRANTED) {
+                    // Request location permissions
+                    ActivityCompat.requestPermissions(CreateItemActivity.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                            REQUEST_LOCATION_PERMISSION);
+                    return;
+                }
 
-            }
+                fusedLocationProviderClient.getLastLocation()
+                        .addOnSuccessListener(new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                if(location != null){
+                                    Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                                    List<Address> addresses = null;
+                                    try {
+                                        addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),1);
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    latitude = String.valueOf(addresses.get(0).getLatitude());
+                                    longitude = String.valueOf(addresses.get(0).getLongitude());
+                                    binding.locationEditText.setText(addresses.get(0).getAddressLine(0));
+
+                                }
+                            }
+                        });
+
+
+        }
         });
 
-        // save button
+
+                // save button
         binding.saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,6 +187,8 @@ public class CreateItemActivity extends AppCompatActivity {
         itemMap.put("date", date);
         itemMap.put("location", location);
         itemMap.put("radio", radio);
+        itemMap.put("lat", latitude);
+        itemMap.put("long", longitude);
 
         // send to db
         db.collection("items").add(itemMap)
